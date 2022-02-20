@@ -9,11 +9,11 @@ app.set("view engine", "ejs") // set ejs as the view engine
 
 app.use(cookieParser());
 
-let generateRandomString = () => {
+let generateRandomString = (length) => {
   let randomID = "";
   let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let charactersLength = characters.length;
-  for (let i = 1; i < 6; i++) {
+  for (let i = 1; i < length; i++) {
     randomID += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
   return randomID;
@@ -23,6 +23,8 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
 };
+
+const users = {};
 
 app.get("/", (req, res) => {
   res.redirect("/urls");
@@ -52,7 +54,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.post("/urls", (req, res) => {
   console.log(req.body);
-  let newID = generateRandomString();
+  let newID = generateRandomString(6);
   urlDatabase[newID] = req.body["longURL"];
   res.redirect(301, `/urls/${newID}`);
 });
@@ -77,6 +79,15 @@ app.post("/logout", (req, res) => {
   res.clearCookie("username");
   res.redirect("/urls");
 });
+
+app.get("/register", (req, res) => {
+  const templateVars = {username: req.cookies["username"]};
+  res.render("register", templateVars);
+});
+
+app.post("/register", (req, res) => {
+
+})
 
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
