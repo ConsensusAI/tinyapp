@@ -18,11 +18,11 @@
         <form method="POST" action="/urls/<%= shortURL %>/delete">
           <button type="delete" class="btn btn-outline-danger">Delete</button>
         </form>
-        <form class="form-inline" action="/urls/<%= shortURL %>/update" method="POST">
+        <form class="form-inline" action="/urls/<%= shortURL %>" method="POST">
           <div class="form-group mb-2">
-            <label for="longURL">Update long URL:</label>
-            <input class="form-control" type="text" name="longURL" placeholder="http://" style="width: 300px; margin: 1em">
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <label for="newlongURL">Update long URL:</label>
+            <input class="form-control" type="text" name="newlongURL" placeholder="http://" style="width: 300px; margin: 1em">
+            <button type="newEdit" class="btn btn-primary">Submit</button>
           </div>
         </form>
       </div>

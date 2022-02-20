@@ -50,17 +50,17 @@ app.post("/urls", (req, res) => {
   res.redirect(301, `/urls/${newID}`);
 });
 
+app.post("/urls/:shortURL", (req, res) => {
+  urlDatabase[req.params.shortURL] = req.body["newlongURL"];
+  console.log(req.body);
+  res.redirect(301, `/urls/${req.params.shortURL}`);
+});
+
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.redirect("/urls");
 });
 
-app.post("urls/:shortURL/update", (req, res) => {
-  // urlDatabase[req.params.shortURL] = 
-  console.log(req.body);
-  res.redirect("/urls");
-  // res.redirect(301, `/urls/${req.params.shortURL}`);
-});
 
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
