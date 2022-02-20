@@ -15,6 +15,9 @@
       <div class="card-body">
         <h5 class="card-title">TinyURL for: <a href="/u/<%= longURL %>"><%= longURL %></a></h5>
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
+        <form method="POST" action="/urls/<%= shortURL %>/delete">
+          <button type="delete" class="btn btn-outline-danger">Delete</button>
+        </form>
       </div>
     <div class="card-footer text-muted"></div>
   </div>
