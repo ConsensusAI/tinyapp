@@ -6,8 +6,14 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs") // set ejs as the view engine
 
-function generateRandomString() {
-  
+let generateRandomString = () => {
+  let randomID = "";
+  let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let charactersLength = characters.length;
+  for (let i = 1; i < 6; i++) {
+    randomID += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return randomID;
 }
 
 const urlDatabase = {
