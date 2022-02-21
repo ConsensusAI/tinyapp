@@ -19,9 +19,8 @@
         <button type="login" class="btn btn-outline-dark">Login</button>
       </div>
       </form>
-      <% } %>
-    <% if (user) { %>
-    <h5>Logged in as: <%= user %>!   </h5>
+      <% } else if (user["email"]) { %>
+    <h5>Logged in as: <%= user["email"] %>!   </h5>
       <form method="POST" action="/logout">
       <button type="logout" class="btn btn-outline-dark">Logout</button>
     </form>  

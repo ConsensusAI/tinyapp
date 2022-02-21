@@ -3,6 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const req = require("express/lib/request");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs"); // set ejs as the view engine
@@ -28,6 +29,15 @@ const userIDGenerator = () => {
   return newUserID;
 };
 
+const checkEmailExistence = (checkEmail) => {
+  for (let userID in users) {
+    if (users[userID]["email"] === checkEmail) {
+      return true;
+    }
+  }
+  return false;
+};
+
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com",
@@ -44,14 +54,16 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const user = users[req.cookies["user_id"]];
-  const templateVars = { urls: urlDatabase, user };
+  const templateVars = {
+    urls: urlDatabase,
+    user: req.cookies["user_id"],
+  };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
   const user = users[req.cookies["user_id"]];
-  const templateVars = { user };
+  const templateVars = { user: req.cookies["user_id"] };
   res.render("urls_new", templateVars);
 });
 
@@ -60,7 +72,7 @@ app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    user,
+    user: req.cookies["user_id"],
   };
   res.render("urls_show", templateVars);
 });
@@ -95,21 +107,37 @@ app.post("/logout", (req, res) => {
 
 app.get("/register", (req, res) => {
   const user = users[req.cookies["user_id"]];
-  const templateVars = { user };
+  const templateVars = { user: req.cookies["user_id"] };
   res.render("register", templateVars);
 });
 
 app.post("/register", (req, res) => {
-  const userID = userIDGenerator();
-  users[userID] = {
-    id: userID,
-    email: req.body["email"],
-    password: req.body["password"],
-  };
-  res.cookie("user_id", users[userID]);
-  console.log(users[userID]);
-  console.log("Email is: " + req.cookies["user_id"]);
-  res.redirect("/urls");
+  let checkEmail = req.body["email"];
+  let checkPass = req.body["password"];
+  if (
+    typeof checkEmail !== "string" ||
+    typeof checkPass !== "string" ||
+    checkEmail === ""
+  ) {
+    console.log("not string");
+    res.status(400);
+    res.redirect("/urls");
+  } else if (checkEmailExistence(checkEmail)) {
+    console.log("already exists");
+    res.status(400);
+    res.redirect("/urls");
+  } else {
+    const userID = userIDGenerator();
+    users[userID] = {
+      id: userID,
+      email: req.body["email"],
+      password: req.body["password"],
+    };
+    res.cookie("user_id", users[userID]);
+    console.log(users[userID]);
+    res.redirect("/urls");
+  }
+  console.log(users);
 });
 
 app.get("/u/:shortURL", (req, res) => {
