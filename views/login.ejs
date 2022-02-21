@@ -8,15 +8,15 @@
       integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
       crossorigin="anonymous"
     />
-    <title>TinyApp Register</title>
+    <title>TinyApp Login</title>
   </head>
 
   <body>
     <header><%- include('partials/_header') %></header>
 
     <main style="margin: 1em">
-      <h3>Register</h3>
-      <form action="/register" method="POST">
+      <h3>Login</h3>
+      <form action="/login" method="POST">
         <div class="form-group">
           <label for="emailInput">Email address</label>
           <input
@@ -36,7 +36,7 @@
             placeholder="Password"
           />
         </div>
-        <button type="register" class="btn btn-primary">Register</button>
+        <button type="login" class="btn btn-primary">Login</button>
       </form>
       <!-- Bootstrap JS -->
       <script

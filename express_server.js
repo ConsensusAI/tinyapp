@@ -29,9 +29,18 @@ const userIDGenerator = () => {
   return newUserID;
 };
 
-const checkEmailExistence = (checkEmail) => {
+const compareEmailExistence = (checkEmail) => {
   for (let userID in users) {
     if (users[userID]["email"] === checkEmail) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const checkEmailExistence = () => {
+  for (let userID in users) {
+    if (users[userID]["email"] || users[userID]["email"] !== undefined) {
       return true;
     }
   }
@@ -57,24 +66,29 @@ app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
     user: req.cookies["user_id"],
+    checkEmailExistence,
   };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  const user = users[req.cookies["user_id"]];
-  const templateVars = { user: req.cookies["user_id"] };
+  const templateVars = { user: req.cookies["user_id"], checkEmailExistence };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const user = users[req.cookies["user_id"]];
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
     user: req.cookies["user_id"],
+    checkEmailExistence,
   };
   res.render("urls_show", templateVars);
+});
+
+app.get("/login", (req, res) => {
+  const templateVars = { user: req.cookies["user_id"], checkEmailExistence };
+  res.render("login", templateVars);
 });
 
 app.post("/urls", (req, res) => {
@@ -107,7 +121,7 @@ app.post("/logout", (req, res) => {
 
 app.get("/register", (req, res) => {
   const user = users[req.cookies["user_id"]];
-  const templateVars = { user: req.cookies["user_id"] };
+  const templateVars = { user: req.cookies["user_id"], checkEmailExistence };
   res.render("register", templateVars);
 });
 
@@ -122,7 +136,7 @@ app.post("/register", (req, res) => {
     console.log("not string");
     res.status(400);
     res.redirect("/urls");
-  } else if (checkEmailExistence(checkEmail)) {
+  } else if (compareEmailExistence(checkEmail)) {
     console.log("already exists");
     res.status(400);
     res.redirect("/urls");
