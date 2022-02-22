@@ -9,12 +9,12 @@
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
         <a class="nav-item nav-link" href="/register">Register</a>
-        <% if (!checkEmailExistence()) { %>
+        <% if (!(user)) { %>
           <a class="nav-item nav-link" href="/login">Login</a>
             <% } %>     
       </div>
     </div>
-    <% if (checkEmailExistence()) { %>
+    <% if (user) { %>
       <h5>Logged in as: <%= user["email"] %>!   </h5>
         <form method="POST" action="/logout">
         <button type="logout" class="btn btn-outline-dark">Logout</button>
