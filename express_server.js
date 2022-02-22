@@ -78,7 +78,7 @@ app.get("/urls", (req, res) => {
     checkEmailExistence,
   };
   console.log("users " + JSON.stringify(users));
-  console.log("user " + JSON.stringify(users[req.cookies["user_id"]["id"]]));
+  // console.log("user " + JSON.stringify(users[req.cookies["user_id"]["id"]]));
   console.log(JSON.stringify(urlDatabase));
   console.log("user_id " + req.cookies["user_id"]);
   res.render("urls_index", templateVars);
@@ -194,7 +194,7 @@ app.post("/register", (req, res) => {
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL]["longURL"];
   res.redirect(longURL);
 });
 
