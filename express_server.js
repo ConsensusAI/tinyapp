@@ -59,10 +59,7 @@ const checkEmailExistence = () => {
   return false;
 };
 
-const urlDatabase = {
-  b2xVn2: "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
-};
+const urlDatabase = {};
 
 const users = {};
 
@@ -81,11 +78,16 @@ app.get("/urls", (req, res) => {
     checkEmailExistence,
   };
   console.log("users " + JSON.stringify(users));
-  console.log("user " + users[req.cookies["user_id"]]);
+  console.log("user " + JSON.stringify(users[req.cookies["user_id"]["id"]]));
+  console.log(JSON.stringify(urlDatabase));
+  console.log("user_id " + req.cookies["user_id"]);
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
+  if (!req.cookies["user_id"]) {
+    res.redirect("/login");
+  }
   const templateVars = {
     user: users[req.cookies["user_id"]],
     checkEmailExistence,
@@ -96,7 +98,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL]["longURL"],
     user: users[req.cookies["user_id"]],
     checkEmailExistence,
   };
@@ -114,7 +116,10 @@ app.get("/login", (req, res) => {
 app.post("/urls", (req, res) => {
   console.log(req.body);
   let newID = generateRandomString(6);
-  urlDatabase[newID] = req.body["longURL"];
+  urlDatabase[newID] = {
+    longURL: req.body["longURL"],
+    userID: req.cookies["user_id"],
+  };
   res.redirect(301, `/urls/${newID}`);
 });
 
@@ -137,9 +142,11 @@ app.post("/login", (req, res) => {
       res.redirect("/urls");
     } else {
       res.status(403);
+      res.redirect("/urls");
     }
   } else {
     res.status(403);
+    res.redirect("/urls");
   }
   // res.redirect("/urls");
 });
