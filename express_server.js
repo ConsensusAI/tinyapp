@@ -59,6 +59,16 @@ const checkEmailExistence = () => {
   return false;
 };
 
+const urlsForUser = (id) => {
+  let userURLs = {};
+  for (let shortURLs in urlDatabase) {
+    if (shortURLs["user_id"] === id) {
+      userURLs[shortURLs] = shortURLs;
+    }
+  }
+  return userURLs;
+};
+
 const urlDatabase = {};
 
 const users = {};
