@@ -105,7 +105,7 @@ app.post("/urls/:shortURL", (req, res) => {
   if (!users[req.session.user_id]) {
     res.redirect("/login");
   } else {
-    urlDatabase[req.params.shortURL] = req.body["newlongURL"];
+    urlDatabase[req.params.shortURL]["longURL"] = req.body["newlongURL"];
     console.log(req.body);
     res.redirect(301, `/urls/${req.params.shortURL}`);
   }
