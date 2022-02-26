@@ -15,7 +15,6 @@ const {
   userIDGenerator,
   getUserByEmail,
   compareEmailExistence,
-  checkEmailExistence,
   urlsForUser,
 } = require("./helpers");
 
@@ -52,13 +51,12 @@ app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
     user: users[req.session.user_id],
-    checkEmailExistence,
   };
   console.log("users " + JSON.stringify(users));
   // console.log("user " + JSON.stringify(users[req.cookies["user_id"]["id"]]));
   console.log(JSON.stringify(urlDatabase));
   console.log("user_id " + req.session.user_id);
-  console.log("getfn " + getUserByEmail(req.session.user_id, users));
+  console.log("------------------------");
   res.render("urls_index", templateVars);
 });
 
@@ -68,7 +66,6 @@ app.get("/urls/new", (req, res) => {
   } else {
     const templateVars = {
       user: users[req.session.user_id],
-      checkEmailExistence,
     };
     res.render("urls_new", templateVars);
   }
@@ -82,7 +79,6 @@ app.get("/urls/:shortURL", (req, res) => {
       shortURL: req.params.shortURL,
       longURL: urlDatabase[req.params.shortURL]["longURL"],
       user: users[req.session.user_id],
-      checkEmailExistence,
     };
     res.render("urls_show", templateVars);
   }
@@ -91,7 +87,6 @@ app.get("/urls/:shortURL", (req, res) => {
 app.get("/login", (req, res) => {
   const templateVars = {
     user: users[req.session.user_id],
-    checkEmailExistence,
   };
   res.render("login", templateVars);
 });
@@ -101,7 +96,7 @@ app.post("/urls", (req, res) => {
   let newID = generateRandomString(6);
   urlDatabase[newID] = {
     longURL: req.body["longURL"],
-    userID: req.session.user_id,
+    user_id: req.session.user_id,
   };
   res.redirect(301, `/urls/${newID}`);
 });
@@ -119,14 +114,16 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   if (!users[req.session.user_id]) {
     res.redirect("/login");
-  } else if (urlsForUser(req.session.user_id)[req.params.shortURL]) {
+  } else if (
+    (urlsForUser(req.session.user_id)[req.params.shortURL], urlDatabase)
+  ) {
     delete urlDatabase[req.params.shortURL];
     res.redirect("/urls");
   }
 });
 
 app.post("/login", (req, res) => {
-  if (compareEmailExistence(req.body["email"])) {
+  if (compareEmailExistence(req.body["email"], users)) {
     let user = getUserByEmail(req.body["email"], users);
     if (bcrypt.compareSync(req.body["password"], users[user]["password"])) {
       req.session.user_id = users[user]["id"];
@@ -150,13 +147,15 @@ app.post("/logout", (req, res) => {
 app.get("/register", (req, res) => {
   const templateVars = {
     user: users[req.session.user_id],
-    checkEmailExistence,
   };
   res.render("register", templateVars);
 });
 
 app.post("/register", (req, res) => {
   let checkEmail = req.body["email"];
+  // console.log("check email " + checkEmail);
+  // console.log("post users ", users);
+  // console.log("compare", compareEmailExistence(checkEmail));
   let checkPass = bcrypt.hashSync(req.body["password"], saltRounds);
   if (
     typeof checkEmail !== "string" ||
@@ -166,12 +165,12 @@ app.post("/register", (req, res) => {
     console.log("not string");
     res.status(400);
     res.redirect("/urls");
-  } else if (compareEmailExistence(checkEmail)) {
+  } else if (compareEmailExistence(checkEmail, users)) {
     console.log("already exists");
     res.status(400);
     res.redirect("/urls");
   } else {
-    const userID = userIDGenerator();
+    const userID = userIDGenerator(users);
     users[userID] = {
       id: userID,
       email: req.body["email"],

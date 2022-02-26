@@ -9,9 +9,9 @@ const generateRandomString = (length) => {
   return randomID;
 };
 
-const userIDGenerator = () => {
+const userIDGenerator = (database) => {
   let newUserID = generateRandomString(5);
-  if (users[newUserID]) {
+  if (database[newUserID]) {
     userIDGenerator();
   }
   return newUserID;
@@ -25,33 +25,21 @@ const getUserByEmail = (email, database) => {
   }
 };
 
-const compareEmailExistence = (checkEmail) => {
-  for (let userID in users) {
-    if (users[userID]["email"] === checkEmail) {
+const compareEmailExistence = (checkEmail, database) => {
+  for (let userID in database) {
+    if (database[userID]["email"] === checkEmail) {
       return true;
     }
   }
   return false;
 };
 
-const checkEmailExistence = () => {
-  for (let userID in users) {
-    if (
-      users[userID]["email"] ||
-      users[userID]["email"] !== undefined ||
-      users
-    ) {
-      return true;
-    }
-  }
-  return false;
-};
-
-const urlsForUser = (id) => {
+const urlsForUser = (id, database) => {
   let userURLs = {};
-  for (let shortURLs in urlDatabase) {
-    if (shortURLs["user_id"] === id) {
-      userURLs[shortURLs] = shortURLs;
+  for (let shortURLs in database) {
+    console.log(shortURLs);
+    if (database[shortURLs]["user_id"] === id) {
+      userURLs[shortURLs] = database[shortURLs];
     }
   }
   return userURLs;
@@ -62,6 +50,5 @@ module.exports = {
   userIDGenerator,
   getUserByEmail,
   compareEmailExistence,
-  checkEmailExistence,
   urlsForUser,
 };
