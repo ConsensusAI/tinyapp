@@ -5,6 +5,8 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const req = require("express/lib/request");
 const { reset } = require("nodemon");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs"); // set ejs as the view engine
@@ -161,7 +163,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/login", (req, res) => {
   if (compareEmailExistence(req.body["email"])) {
     let ID = getUserIDByEmail(req.body["email"]);
-    if (users[ID]["password"] === req.body["password"]) {
+    if (bcrypt.compareSync(req.body["password"], users[ID]["password"])) {
       res.cookie("user_id", ID);
       res.redirect("/urls");
     } else {
@@ -190,7 +192,7 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   let checkEmail = req.body["email"];
-  let checkPass = req.body["password"];
+  let checkPass = bcrypt.hashSync(req.body["password"], saltRounds);
   if (
     typeof checkEmail !== "string" ||
     typeof checkPass !== "string" ||
@@ -208,7 +210,7 @@ app.post("/register", (req, res) => {
     users[userID] = {
       id: userID,
       email: req.body["email"],
-      password: req.body["password"],
+      password: bcrypt.hashSync(req.body["password"], saltRounds),
     };
     res.cookie("user_id", userID);
     console.log("in register: " + JSON.stringify(users[userID]));
