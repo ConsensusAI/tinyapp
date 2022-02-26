@@ -1,15 +1,28 @@
+// Set up Express
 const express = require("express");
 const app = express();
+const req = require("express/lib/request");
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
-const cookieSession = require("cookie-session");
-const req = require("express/lib/request");
-const { reset } = require("nodemon");
-const bcrypt = require("bcrypt");
-const saltRounds = 10;
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs"); // set ejs as the view engine
+
+// nodemon to refresh running server and test changes
+const { reset } = require("nodemon");
+
+const {
+  generateRandomString,
+  userIDGenerator,
+  getUserByEmail,
+  compareEmailExistence,
+  checkEmailExistence,
+  urlsForUser,
+} = require("./helpers");
+
+// Cookies and Encryption
+const cookieSession = require("cookie-session");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 app.set("trust proxy", 1);
 
@@ -23,67 +36,8 @@ app.use(
   })
 );
 
-let generateRandomString = (length) => {
-  let randomID = "";
-  let characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let charactersLength = characters.length;
-  for (let i = 1; i < length; i++) {
-    randomID += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return randomID;
-};
-
-const userIDGenerator = () => {
-  let newUserID = generateRandomString(5);
-  if (users[newUserID]) {
-    userIDGenerator();
-  }
-  return newUserID;
-};
-
-const compareEmailExistence = (checkEmail) => {
-  for (let userID in users) {
-    if (users[userID]["email"] === checkEmail) {
-      return true;
-    }
-  }
-  return false;
-};
-
-const getUserByEmail = (email, database) => {
-  for (let user in database) {
-    if (database[user]["email"] === email) {
-      return user;
-    }
-  }
-};
-
-const checkEmailExistence = () => {
-  for (let userID in users) {
-    if (
-      users[userID]["email"] ||
-      users[userID]["email"] !== undefined ||
-      users
-    ) {
-      return true;
-    }
-  }
-  return false;
-};
-
-const urlsForUser = (id) => {
-  let userURLs = {};
-  for (let shortURLs in urlDatabase) {
-    if (shortURLs["user_id"] === id) {
-      userURLs[shortURLs] = shortURLs;
-    }
-  }
-  return userURLs;
-};
-
+// Databases
 const urlDatabase = {};
-
 const users = {};
 
 app.get("/", (req, res) => {
