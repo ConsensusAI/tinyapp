@@ -51,10 +51,10 @@ const compareEmailExistence = (checkEmail) => {
   return false;
 };
 
-const getUserIDByEmail = (email) => {
-  for (let userID in users) {
-    if (users[userID]["email"] === email) {
-      return userID;
+const getUserByEmail = (email, database) => {
+  for (let user in database) {
+    if (database[user]["email"] === email) {
+      return user;
     }
   }
 };
@@ -104,6 +104,7 @@ app.get("/urls", (req, res) => {
   // console.log("user " + JSON.stringify(users[req.cookies["user_id"]["id"]]));
   console.log(JSON.stringify(urlDatabase));
   console.log("user_id " + req.session.user_id);
+  console.log("getfn " + getUserByEmail(req.session.user_id, users));
   res.render("urls_index", templateVars);
 });
 
@@ -172,9 +173,9 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 app.post("/login", (req, res) => {
   if (compareEmailExistence(req.body["email"])) {
-    let ID = getUserIDByEmail(req.body["email"]);
-    if (bcrypt.compareSync(req.body["password"], users[ID]["password"])) {
-      req.session.user_id = ID;
+    let user = getUserByEmail(req.body["email"], users);
+    if (bcrypt.compareSync(req.body["password"], users[user]["password"])) {
+      req.session.user_id = users[user]["id"];
       res.redirect("/urls");
     } else {
       res.status(403);
@@ -188,7 +189,7 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/logout", (req, res) => {
-  res.clearCookie("user_id");
+  req.session = null;
   res.redirect("/urls");
 });
 
