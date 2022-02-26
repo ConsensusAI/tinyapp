@@ -13,6 +13,10 @@
 
   <body>
     <header><%- include('partials/_header') %></header>
+
+    <% if (!user) { %>
+    <p>Please log in.</p>
+    <% } else { %>
     <div class="card text-center">
       <div class="card-header"></div>
       <div class="card-body">
@@ -41,6 +45,7 @@
       </div>
       <div class="card-footer text-muted"></div>
     </div>
+    <% } %>
     <!-- Bootstrap JS -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"

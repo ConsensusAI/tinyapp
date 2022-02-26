@@ -4,6 +4,7 @@ const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const req = require("express/lib/request");
+const { reset } = require("nodemon");
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs"); // set ejs as the view engine
@@ -95,24 +96,29 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  if (!req.cookies["user_id"]) {
+  if (!users[req.cookies["user_id"]]) {
     res.redirect("/login");
+  } else {
+    const templateVars = {
+      user: users[req.cookies["user_id"]],
+      checkEmailExistence,
+    };
+    res.render("urls_new", templateVars);
   }
-  const templateVars = {
-    user: users[req.cookies["user_id"]],
-    checkEmailExistence,
-  };
-  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]["longURL"],
-    user: users[req.cookies["user_id"]],
-    checkEmailExistence,
-  };
-  res.render("urls_show", templateVars);
+  if (!urlDatabase[req.params.shortURL]) {
+    res.redirect("/urls/new");
+  } else {
+    const templateVars = {
+      shortURL: req.params.shortURL,
+      longURL: urlDatabase[req.params.shortURL]["longURL"],
+      user: users[req.cookies["user_id"]],
+      checkEmailExistence,
+    };
+    res.render("urls_show", templateVars);
+  }
 });
 
 app.get("/login", (req, res) => {
@@ -134,14 +140,22 @@ app.post("/urls", (req, res) => {
 });
 
 app.post("/urls/:shortURL", (req, res) => {
-  urlDatabase[req.params.shortURL] = req.body["newlongURL"];
-  console.log(req.body);
-  res.redirect(301, `/urls/${req.params.shortURL}`);
+  if (!users[req.cookies["user_id"]]) {
+    res.redirect("/login");
+  } else {
+    urlDatabase[req.params.shortURL] = req.body["newlongURL"];
+    console.log(req.body);
+    res.redirect(301, `/urls/${req.params.shortURL}`);
+  }
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect("/urls");
+  if (!users[req.cookies["user_id"]]) {
+    res.redirect("/login");
+  } else {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect("/urls");
+  }
 });
 
 app.post("/login", (req, res) => {
