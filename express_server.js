@@ -1,10 +1,10 @@
 // Set up Express
 const express = require("express");
 const app = express();
-const req = require("express/lib/request");
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.set("view engine", "ejs"); // set ejs as the view engine
 
 // nodemon to refresh running server and test changes
@@ -166,27 +166,30 @@ app.get("/register", (req, res) => {
 app.post("/register", (req, res) => {
   let checkEmail = req.body["email"];
   let checkPass = bcrypt.hashSync(req.body["password"], saltRounds);
+  // Check for valid email and passwords
   if (
     typeof checkEmail !== "string" ||
     typeof checkPass !== "string" ||
     checkEmail === ""
   ) {
     console.log("not string");
-    res.status(400);
+    res.status(400).send("Not a string!");
     res.redirect("/urls");
   } else if (compareEmailExistence(checkEmail, users)) {
-    console.log("already exists");
-    res.status(400);
-    res.redirect("/urls");
+    // Check if the email already exists in the database
+    res.status(400).send("Email already exists!");
+    // res.redirect("/urls");
   } else {
+    // Generate new ID
     const userID = userIDGenerator(users);
+    //Add user to database
     users[userID] = {
       id: userID,
       email: req.body["email"],
       password: bcrypt.hashSync(req.body["password"], saltRounds),
     };
+    // Set session cookies
     req.session.user_id = userID;
-    console.log("in register: " + JSON.stringify(users[userID]));
     res.redirect("/urls");
   }
 });
