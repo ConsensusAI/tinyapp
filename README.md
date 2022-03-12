@@ -5,8 +5,9 @@ submit URLs that are automatically shortened. Users may view all their created U
 
 ## Final Product
 
-!["screenshot description"](#)
-!["screenshot description"](#)
+!["Login Page"](https://github.com/ConsensusAI/tinyapp/blob/master/screenshots/tinyapp-login.png)
+!["Shortened URL Page"](https://github.com/ConsensusAI/tinyapp/blob/master/screenshots/tinyapp-url-show.png)
+!["My URLs Index"](https://github.com/ConsensusAI/tinyapp/blob/master/screenshots/tinyapp-urls-index.png)
 
 ## Dependencies
 
