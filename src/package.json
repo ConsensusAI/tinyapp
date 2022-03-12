@@ -1,0 +1,36 @@
+{
+  "name": "tinyapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "./node_modules/.bin/nodemon -L express_server.js",
+    "test": "./node_modules/mocha/bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ConsensusAI/tinyapp.git"
+  },
+  "keywords": [],
+  "author": "Malik Ammad Iqbal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ConsensusAI/tinyapp/issues"
+  },
+  "homepage": "https://github.com/ConsensusAI/tinyapp#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.19.2",
+    "cookie-session": "^2.0.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.3",
+    "method-override": "^3.0.0",
+    "node-pre-gyp": "^0.17.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "cookie-parser": "^1.4.6",
+    "mocha": "^9.2.1",
+    "nodemon": "^2.0.15"
+  }
+}
