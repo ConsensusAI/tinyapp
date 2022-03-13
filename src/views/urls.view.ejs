@@ -17,9 +17,13 @@
     <title>TinyApp</title>
   </head>
   <body>
+    <!--Use header partial-->
     <header><%- include('partials/_header') %></header>
+
     <main style="margin: 1em">
       <h3>My URLs</h3>
+
+      <!--Ask to log in if no user-->
       <% if (!user) { %>
       <p>Please log in.</p>
       <% } else { %>
@@ -33,11 +37,14 @@
           </tr>
         </thead>
         <tbody>
+          <!--List all urls with their respective longURLs in a table-->
           <% for(let url in urls) { %>
           <tr>
             <td><%= url %></td>
             <td><%= urls[url]["longURL"] %></td>
+
             <td>
+              <!--Edit button brings you to the shortURL page-->
               <form method="GET" action="/urls/<%= url %>/">
                 <button type="edit" class="btn btn-outline-primary">
                   Edit
@@ -45,6 +52,7 @@
               </form>
             </td>
             <td>
+              <!--Delete button to instantly delete the shortURL from the database-->
               <form method="POST" action="/urls/<%= url %>/delete">
                 <button type="delete" class="btn btn-outline-danger">
                   Delete
