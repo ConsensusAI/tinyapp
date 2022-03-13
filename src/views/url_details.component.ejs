@@ -11,9 +11,11 @@
     <title>URL - TinyApp Example</title>
   </head>
 
+  <!--Include header partial-->
   <body>
     <header><%- include('partials/_header') %></header>
 
+    <!--Ask to log if not already-->
     <% if (!user) { %>
     <p>Please log in.</p>
     <% } else { %>
@@ -26,9 +28,13 @@
         <p class="card-text">
           Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a>
         </p>
+
+        <!--Delete button-->
         <form method="POST" action="/urls/<%= shortURL %>/delete">
           <button type="delete" class="btn btn-outline-danger">Delete</button>
         </form>
+
+        <!--Edit button-->
         <form class="form-inline" action="/urls/<%= shortURL %>" method="POST">
           <div class="form-group mb-2">
             <label for="newlongURL">Update long URL:</label>
@@ -46,6 +52,7 @@
       <div class="card-footer text-muted"></div>
     </div>
     <% } %>
+
     <!-- Bootstrap JS -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"

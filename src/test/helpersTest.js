@@ -6,6 +6,7 @@ const {
   urlsForUser,
 } = require("../helpers");
 
+// Object used for testing
 const testUsers = {
   userRandomID: {
     id: "userRandomID",
@@ -19,6 +20,7 @@ const testUsers = {
   },
 };
 
+// Object used for testing
 const testUrlDatabase = {
   short: { longURL: "www.test.com", user_id: "user" },
   short2: { longURL: "www.lighthouselabs.com", user_id: "lighthouse" },

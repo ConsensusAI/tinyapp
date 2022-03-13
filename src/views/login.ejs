@@ -11,11 +11,13 @@
     <title>TinyApp Login</title>
   </head>
 
+  <!--Include header partial-->
   <body>
     <header><%- include('partials/_header') %></header>
 
     <main style="margin: 1em">
       <h3>Login</h3>
+      <!--Email form to log in-->
       <form action="/login" method="POST">
         <div class="form-group">
           <label for="emailInput">Email address</label>
@@ -27,6 +29,8 @@
             placeholder="example@example.com"
           />
         </div>
+
+        <!--Password form to log in-->
         <div class="form-group">
           <label for="passwordInput">Password</label>
           <input
@@ -38,6 +42,7 @@
         </div>
         <button type="login" class="btn btn-primary">Login</button>
       </form>
+
       <!-- Bootstrap JS -->
       <script
         src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
