@@ -194,7 +194,6 @@ app.post("/register", (req, res) => {
     // Set session cookies
     req.session.user_id = userID;
     userURLS = urlsForUser(req.session.user_id, urlDatabase);
-    console.log(userURLS);
     res.redirect("/urls");
   }
 });
@@ -211,6 +210,4 @@ app.get("/hello", (req, res) => {
 });
 
 // Confirmation of Listening
-app.listen(PORT, () => {
-  console.log(`TinyApp listening on port ${PORT}!`);
-});
+app.listen(PORT, () => {});
