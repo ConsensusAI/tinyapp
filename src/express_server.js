@@ -38,6 +38,7 @@ app.use(
 // Databases
 const urlDatabase = {};
 const users = {};
+let userURLS = {};
 
 // Home, redirects to URLs
 app.get("/", (req, res) => {
@@ -51,10 +52,10 @@ app.get("/urls.json", (req, res) => {
 
 // URLs Home Page
 app.get("/urls", (req, res) => {
+  userURLS = urlsForUser(req.session.user_id, urlDatabase);
   const templateVars = {
-    urls: urlDatabase,
+    urls: userURLS,
     user: users[req.session.user_id],
-    urlsForUser,
   };
   res.render("urls.view.ejs", templateVars);
 });
@@ -97,7 +98,6 @@ app.get("/login", (req, res) => {
 
 // POST new shortened URL
 app.post("/urls", (req, res) => {
-  console.log(req.body);
   let newID = generateRandomString(6);
   urlDatabase[newID] = {
     longURL: req.body["longURL"],
@@ -136,6 +136,7 @@ app.post("/login", (req, res) => {
     // Check if passwords match
     if (bcrypt.compareSync(req.body["password"], users[user]["password"])) {
       req.session.user_id = users[user]["id"];
+      userURLS = urlsForUser(req.session.user_id, urlDatabase);
       res.redirect("/urls");
     } else {
       // Redirect to urls if password don't match
@@ -192,6 +193,8 @@ app.post("/register", (req, res) => {
     };
     // Set session cookies
     req.session.user_id = userID;
+    userURLS = urlsForUser(req.session.user_id, urlDatabase);
+    console.log(userURLS);
     res.redirect("/urls");
   }
 });
