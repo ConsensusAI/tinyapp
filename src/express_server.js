@@ -54,8 +54,9 @@ app.get("/urls", (req, res) => {
   const templateVars = {
     urls: urlDatabase,
     user: users[req.session.user_id],
+    urlsForUser,
   };
-  res.render("urls_index", templateVars);
+  res.render("urls.view.ejs", templateVars);
 });
 
 // Create new URL page
@@ -67,7 +68,7 @@ app.get("/urls/new", (req, res) => {
     const templateVars = {
       user: users[req.session.user_id],
     };
-    res.render("urls_new", templateVars);
+    res.render("create_url.component.ejs", templateVars);
   }
 });
 
@@ -82,7 +83,7 @@ app.get("/urls/:shortURL", (req, res) => {
       longURL: urlDatabase[req.params.shortURL]["longURL"],
       user: users[req.session.user_id],
     };
-    res.render("urls_show", templateVars);
+    res.render("url_details.component.ejs", templateVars);
   }
 });
 
@@ -164,6 +165,10 @@ app.get("/register", (req, res) => {
 
 // POST new user info
 app.post("/register", (req, res) => {
+  // Handle empty passwords
+  if (req.body["password"] === "") {
+    res.status(400).send("Please enter a valid password.");
+  }
   let checkEmail = req.body["email"];
   let checkPass = bcrypt.hashSync(req.body["password"], saltRounds);
   // Check for valid email and passwords
@@ -172,13 +177,10 @@ app.post("/register", (req, res) => {
     typeof checkPass !== "string" ||
     checkEmail === ""
   ) {
-    console.log("not string");
     res.status(400).send("Not a string!");
-    res.redirect("/urls");
   } else if (compareEmailExistence(checkEmail, users)) {
     // Check if the email already exists in the database
     res.status(400).send("Email already exists!");
-    // res.redirect("/urls");
   } else {
     // Generate new ID
     const userID = userIDGenerator(users);
